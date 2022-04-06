@@ -23,26 +23,22 @@ export function getDateEvents(date: Date) {
     (event: EventData) => {
       const start = new Date(event.start);
       const end = new Date(event.end);
+      start.setHours(0);
+      start.setMinutes(0)
+      end.setHours(0);
+      end.setMinutes(0);
       const currentMonth = this.currentDate.getMonth();
-      if(start.getMonth() !== end.getMonth() && currentMonth === end.getMonth()) {
-          let startDate = new Date(
-              `${end.getFullYear()}-${("0" + end.getMonth()).slice(-2)}-01T${("0" + end.getHours()).slice(-2)}:${("0" + end.getMinutes()).slice(-2)}:${("0" + end.getSeconds()).slice(-2)}`
-          );
-          if (
-              date.getDate() >= startDate.getDate() && date.getDate() <= end.getDate()
-          ) {
-              return true;
-          } else {
-              return false;
-          }
+      const startDate = new Date(end);
+      startDate.setDate(1);
+      console.log(
+          start,
+          end,
+          startDate
+      )
+      if((start.getMonth() !== end.getMonth() || start.getFullYear() !== end.getFullYear()) && currentMonth === end.getMonth()) {
+          return date.getTime() >= startDate.getTime() && date.getTime() <= end.getTime();
       } else {
-          if (
-              date.getDate() >= start.getDate() && date.getDate() <= end.getDate()
-          ) {
-              return true;
-          } else {
-              return false;
-          }
+          return date.getTime() >= start.getTime() && date.getTime() <= end.getTime();
       }
     }
   );

@@ -223,22 +223,17 @@ export function renderDays() {
   this.filteredEventsThisMonth.forEach((event: EventData) => {
     const start = new Date(event.start);
     const end = new Date(event.end);
-    console.log([
-      start.getMonth(),
-      end.getMonth(),
-      currentMonth,
-      start.getMonth() != end.getMonth() && currentMonth === end.getMonth()
-    ])
-    if(start.getMonth() != end.getMonth() && currentMonth === end.getMonth()) {
-      let startDate = new Date(
-          `${end.getFullYear()}-${("0" + end.getMonth()).slice(-2)}-01T${("0" + end.getHours()).slice(-2)}:${("0" + end.getMinutes()).slice(-2)}:${("0" + end.getSeconds()).slice(-2)}`
-      );
+    if((start.getMonth() != end.getMonth() || start.getFullYear() !== end.getFullYear()) && currentMonth === end.getMonth()) {
+      const startDate = new Date(end.getFullYear(), end.getMonth(), 1)
       for (let i = startDate.getDate(); i <= end.getDate(); i++) {
         this.eventDayMap[i] = true;
       }
     } else {
-      for (let i = start.getDate(); i <= end.getDate(); i++) {
+      const days = Math.round((end.getTime() - start.getTime()) / (1000 *60 *60 *24))
+      let i = start.getDate()
+      for (let y = days; y > 0; y--) {
         this.eventDayMap[i] = true;
+        i++;
       }
     }
   });
