@@ -21,12 +21,28 @@ export function addEventsData(newEvents: EventData[] = []) {
 export function getDateEvents(date: Date) {
   let filteredEventsThisDate = this.filteredEventsThisMonth.filter(
     (event: EventData) => {
-      const start = new Date(event.start).getDate();
-      const end = new Date(event.end).getDate();
-      if (date.getDate() >= start && date.getDate() <= end) {
-        return true;
+      const start = new Date(event.start);
+      const end = new Date(event.end);
+      const currentMonth = this.currentDate.getMonth();
+      if(start.getMonth() !== end.getMonth() && currentMonth === end.getMonth()) {
+          let startDate = new Date(
+              `${end.getFullYear()}-${("0" + end.getMonth()).slice(-2)}-01T${("0" + end.getHours()).slice(-2)}:${("0" + end.getMinutes()).slice(-2)}:${("0" + end.getSeconds()).slice(-2)}`
+          );
+          if (
+              date.getDate() >= startDate.getDate() && date.getDate() <= end.getDate()
+          ) {
+              return true;
+          } else {
+              return false;
+          }
       } else {
-        return false;
+          if (
+              date.getDate() >= start.getDate() && date.getDate() <= end.getDate()
+          ) {
+              return true;
+          } else {
+              return false;
+          }
       }
     }
   );

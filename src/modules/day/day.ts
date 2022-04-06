@@ -205,8 +205,13 @@ export function renderDays() {
   const currentYear = this.currentDate.getFullYear();
   const currentMonth = this.currentDate.getMonth();
   this.filteredEventsThisMonth = this.eventsData.filter((event: EventData) => {
-    const eventDate = new Date(event.start);
-    if (eventDate.getFullYear() === currentYear && eventDate.getMonth() === currentMonth) {
+    const eventDateStart = new Date(event.start);
+    const eventDateEnd = new Date(event.end);
+    if (
+        eventDateStart.getFullYear() === currentYear && eventDateStart.getMonth() === currentMonth
+        ||
+        eventDateEnd.getFullYear() === currentYear && eventDateEnd.getMonth() === currentMonth
+    ) {
       return true;
     } else {
       return false;
@@ -216,10 +221,25 @@ export function renderDays() {
   // Create object of all days that have events - for creating event bullets
   this.eventDayMap = {};
   this.filteredEventsThisMonth.forEach((event: EventData) => {
-    const start = new Date(event.start).getDate();
-    const end = new Date(event.end).getDate();
-    for (let i = start; i <= end; i++) {
-      this.eventDayMap[i] = true;
+    const start = new Date(event.start);
+    const end = new Date(event.end);
+    console.log([
+      start.getMonth(),
+      end.getMonth(),
+      currentMonth,
+      start.getMonth() != end.getMonth() && currentMonth === end.getMonth()
+    ])
+    if(start.getMonth() != end.getMonth() && currentMonth === end.getMonth()) {
+      let startDate = new Date(
+          `${end.getFullYear()}-${("0" + end.getMonth()).slice(-2)}-01T${("0" + end.getHours()).slice(-2)}:${("0" + end.getMinutes()).slice(-2)}:${("0" + end.getSeconds()).slice(-2)}`
+      );
+      for (let i = startDate.getDate(); i <= end.getDate(); i++) {
+        this.eventDayMap[i] = true;
+      }
+    } else {
+      for (let i = start.getDate(); i <= end.getDate(); i++) {
+        this.eventDayMap[i] = true;
+      }
     }
   });
 
